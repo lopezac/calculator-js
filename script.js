@@ -31,25 +31,9 @@ function doCalculation() {
 function doOperatorsCalc(calc, operators) {
     let i = 1;
     while (i < calc.length) {
-        let operator = calc[i];
-        let num1 = calc[i - 1];
-        let num2 = calc[i + 1];
-        
-        if (operators.includes("*")) {
-            if (operator === "*") {
-                calc[i] = multiply(num1, num2);
-            } else if (operator === "/") {
-                calc[i] = divide(num1, num2);
-            }
-        } else {
-            if (operator === "+") {
-                calc[i] = add(num1, num2);
-            } else if (operator === "-") {
-                calc[i] = subtract(num1, num2);
-            }
-        }
-        
-        if (operator !== calc[i]) {
+        calc[i] = doOperation(calc, operators, i);   
+
+        if (isNum(calc[i])) {
             calc.splice(i - 1, 1);
             calc.splice(i, 1);
         } else {
@@ -57,6 +41,27 @@ function doOperatorsCalc(calc, operators) {
         }
     }
     return calc;
+}
+
+function doOperation(calc, operators, i) {
+    let operator = calc[i];
+    let num1 = calc[i - 1];
+    let num2 = calc[i + 1];
+    
+    if (operators.includes("*")) {
+        if (operator === "*") {
+            return multiply(num1, num2);
+        } else if (operator === "/") {
+            return divide(num1, num2);
+        }
+    } else if (operators.includes("+")) {
+        if (operator === "+") {
+            return add(num1, num2);
+        } else if (operator === "-") {
+            return subtract(num1, num2);
+        }
+    }
+    return operator;
 }
 
 function addToDisplay(btn) {
