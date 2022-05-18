@@ -76,6 +76,10 @@ body {
     margin-right: 10px;
 }
 
+.btn:nth-child(10) {
+    flex: 45;
+}
+
 .bottom-content > .operators,
 .calculator > .operators {
     display: flex;

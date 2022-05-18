@@ -22,10 +22,23 @@ function isValidInput(btn) {
     let last = calculation[calculation.length - 1];
     let lastTwo = calculation[calculation.length - 2];
     if ((isOperator(last) && isOperator(lastTwo) && isOperator(btn)) ||
-        (isOperator(last) && isMultiplyOperator(btn))) {
+        (isOperator(last) && isMultiplyOperator(btn)) ||
+        (isOperator(last) && btn === ".") ||
+        (last === "." && isOperator(btn)) ||
+        (lastCalcNum(calculation).includes(".") && btn === ".")
+        ) {
         return false;
     }
     return true;
+}
+
+function lastCalcNum(calc) {
+    let majorIdx = 0;
+    for (operator of ["*", "/", "+", "-"]) {
+        let lastIdx = calc.lastIndexOf(operator);
+        majorIdx = (lastIdx > majorIdx) ? lastIdx : majorIdx;
+    }
+    return calc.slice(majorIdx + 1);
 }
 
 function doCalculation() {
@@ -80,7 +93,7 @@ function formatCalculation() {
     let fCalc = display.textContent.split("");
     let i = 0;
     while (i < fCalc.length) {
-        if (isNum(fCalc[i])) {
+        if (isNum(fCalc[i]) || fCalc[i] === ".") {
             joinDigits(fCalc, i);
             joinOperators(fCalc, i);
         }
