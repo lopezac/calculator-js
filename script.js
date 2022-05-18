@@ -5,6 +5,8 @@ buttons.forEach(btn => btn.addEventListener("click", (e) => {
     selectInputOperation(e.target.textContent)
 }));
 
+document.addEventListener("keydown", (e) => selectInputOperation(e.key));
+
 function selectInputOperation(btn) {
     if (btn === "=") {
         doCalculation();
@@ -12,7 +14,7 @@ function selectInputOperation(btn) {
         clearDisplay();
     } else if (btn === "Undo") {
         undoLastAction();
-    } else {
+    } else if (isNum(btn) || isOperator(btn) || btn === ".") {
         if (isValidInput(btn)) addToDisplay(btn);
     }
 }
