@@ -81,37 +81,35 @@ function formatCalculation() {
     let i = 0;
     while (i < fCalc.length) {
         if (isNum(fCalc[i])) {
-            
-            if (isNum(fCalc[i + 1])) {
-                // let nextOperator = getNextOperator(fCalc, i);
-                if(fCalc[i + 1] === "0") {
-                    fCalc[i + 1] = fCalc[i].toString() + fCalc[i + 1].toString();
-                } else {
-                    fCalc[i + 1] = fCalc[i] + fCalc[i + 1];
-                }
-                fCalc.splice(i, 1);
-                continue;
-            }
-
-            if (isSumOperator(fCalc[i - 1]) && 
-            ((fCalc[i - 2] === undefined) || isOperator(fCalc[i - 2]))) {
-                fCalc[i] = fCalc[i - 1] + fCalc[i];
-                fCalc.splice(i - 1, 1);
-            } else {
-                i += 1;
-            }
-        } else {
-            i += 1;
+            joinDigits(fCalc, i);
+            joinOperators(fCalc, i);
         }
-
+        i += 1;
     }
     return fCalc;
+}
+
+function joinDigits(calc, i) {
+    let nextOpIdx = getNextOperator(calc, i);
+    // Problem is when the array ends slice doesnt count the nextOpIdx, 
+    // do an if else or something like that or rethink the problem.
+    let finalNum = calc.slice(i, nextOpIdx).join("");
+    if (finalNum) calc.splice(i, finalNum.length, finalNum);
+}
+
+function joinOperators(calc, i) {
+    if (isSumOperator(calc[i-1])) {
+        if (!calc[i-2] || isOperator(calc[i-2])) {
+            calc[i] = calc[i-1] + calc[i];
+        }
+    }
 }
 
 function getNextOperator(calc, numIndex) {
     for (let i = numIndex; i < calc.length; i++) {
         if (isOperator(calc[i])) return i;
     }
+    return calc.length;
 }
 
 function isNum(string) {
