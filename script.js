@@ -32,10 +32,7 @@ function doOperatorsCalc(calc, operators) {
     let i = 1;
     while (i < calc.length) {
         calc[i] = doOperation(calc, operators, i);
-        // if (isDecimal(calc[i])) {
-        //     let decimalLength = calc[i].toString().slice(calc[i].indexOf(".") + 1, calc.length).length;
-        //     if (decimalLength > 2) calc[i] = calc[i].toFixed(2);
-        // }
+        if (isDecimal(calc[i])) roundDecimal(calc, i);
 
         if (isNum(calc[i])) {
             calc.splice(i - 1, 1);
@@ -45,6 +42,12 @@ function doOperatorsCalc(calc, operators) {
         }
     }
     return calc;
+}
+
+function roundDecimal(calc, numIdx) {
+    let num = calc[numIdx].toString();
+    let decimalLength = num.slice(num.indexOf(".")+1, num.length).length;
+    if (decimalLength > 2) calc[numIdx] = calc[numIdx].toFixed(2);
 }
 
 function doOperation(calc, operators, i) {
@@ -91,8 +94,6 @@ function formatCalculation() {
 
 function joinDigits(calc, i) {
     let nextOpIdx = getNextOperator(calc, i);
-    // Problem is when the array ends slice doesnt count the nextOpIdx, 
-    // do an if else or something like that or rethink the problem.
     let finalNum = calc.slice(i, nextOpIdx).join("");
     if (finalNum) calc.splice(i, finalNum.length, finalNum);
 }
@@ -112,6 +113,10 @@ function getNextOperator(calc, numIndex) {
     return calc.length;
 }
 
+function isDecimal(number) {
+    number.indexOf(".") !== -1;
+}
+
 function isNum(string) {
     return !isNaN(string);
 }
@@ -121,7 +126,7 @@ function isOperator(string) {
 }
 
 function isDecimal(num) {
-    return num.indexOf("*") !== "-1";
+    return num.toString().indexOf("*") !== "-1";
 }
 
 function isSumOperator(string) {
