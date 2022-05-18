@@ -9,12 +9,23 @@ function selectInputOperation(btn) {
     if (btn === "=") {
         doCalculation();
     } else if (btn === "Clear") {
-        console.log("Do clear operation");
+        clearDisplay();
     } else if (btn === "Undo") {
-        console.log("Do undo operation");
+        undoLastAction();
     } else {
-        addToDisplay(btn);
+        if (isValidInput(btn)) addToDisplay(btn);
     }
+}
+
+function isValidInput(btn) {
+    let calculation = display.textContent;
+    let last = calculation[calculation.length - 1];
+    let lastTwo = calculation[calculation.length - 2];
+    if ((isOperator(last) && isOperator(lastTwo) && isOperator(btn)) ||
+        (isOperator(last) && isMultiplyOperator(btn))) {
+        return false;
+    }
+    return true;
 }
 
 function doCalculation() {
@@ -24,7 +35,7 @@ function doCalculation() {
     doOperatorsCalc(calculation, ["*", "/"]);
     doOperatorsCalc(calculation, ["+", "-"]);
     updateDisplay(calculation);
-
+    
     return calculation;
 }
 
@@ -33,7 +44,7 @@ function doOperatorsCalc(calc, operators) {
     while (i < calc.length) {
         calc[i] = doOperation(calc, operators, i);
         if (isDecimal(calc[i])) roundDecimal(calc, i);
-
+        
         if (isNum(calc[i])) {
             calc.splice(i - 1, 1);
             calc.splice(i, 1);
@@ -42,12 +53,6 @@ function doOperatorsCalc(calc, operators) {
         }
     }
     return calc;
-}
-
-function roundDecimal(calc, numIdx) {
-    let num = calc[numIdx].toString();
-    let decimalLength = num.slice(num.indexOf(".")+1, num.length).length;
-    if (decimalLength > 2) calc[numIdx] = calc[numIdx].toFixed(2);
 }
 
 function doOperation(calc, operators, i) {
@@ -69,14 +74,6 @@ function doOperation(calc, operators, i) {
         }
     }
     return operator;
-}
-
-function addToDisplay(btn) {
-    display.textContent += btn;
-}
-
-function updateDisplay(text) {
-    display.textContent = text;
 }
 
 function formatCalculation() {
@@ -102,6 +99,7 @@ function joinOperators(calc, i) {
     if (isSumOperator(calc[i-1])) {
         if (!calc[i-2] || isOperator(calc[i-2])) {
             calc[i] = calc[i-1] + calc[i];
+            calc.splice(i - 1, 1);
         }
     }
 }
@@ -111,6 +109,29 @@ function getNextOperator(calc, numIndex) {
         if (isOperator(calc[i])) return i;
     }
     return calc.length;
+}
+
+function roundDecimal(calc, numIdx) {
+    let num = calc[numIdx].toString();
+    let decimalLength = num.slice(num.indexOf(".")+1, num.length).length;
+    if (decimalLength > 2) calc[numIdx] = calc[numIdx].toFixed(2);
+}
+
+function addToDisplay(btn) {
+    display.textContent += btn;
+}
+
+function updateDisplay(text) {
+    display.textContent = text;
+}
+
+function clearDisplay() {
+    display.textContent = "";
+}
+
+function undoLastAction() {
+    let dText = display.textContent;
+    display.textContent = dText.slice(0, dText.length - 1) 
 }
 
 function isDecimal(number) {
@@ -131,6 +152,10 @@ function isDecimal(num) {
 
 function isSumOperator(string) {
     return ["+", "-"].includes(string);
+}
+
+function isMultiplyOperator(text) {
+    return ["*", "/"].includes(text);
 }
 
 function add(num1, num2) {
